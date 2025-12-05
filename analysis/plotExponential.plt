@@ -12,7 +12,7 @@ set out resultsfolder.'/graphs/Kieker-java.pdf'
 set title 'Kieker-java Method Execution Durations'
 
 set xlabel 'Call Tree Depth'
-set ylabel 'Duration {/Symbol m}s'
+set ylabel 'Duration ns'
 
 set key right center
 
@@ -36,7 +36,7 @@ set out resultsfolder.'/graphs/OpenTelemetry-java.pdf'
 set title 'OpenTelemetry-java Method Execution Durations'
 
 set xlabel 'Call Tree Depth'
-set ylabel 'Duration {/Symbol m}s'
+set ylabel 'Duration ns'
 
 set key right center
 	
@@ -61,7 +61,7 @@ set out resultsfolder.'/graphs/inspectIT.pdf'
 set title 'inspectIT Method Execution Durations'
 
 set xlabel 'Call Tree Depth'
-set ylabel 'Duration {/Symbol m}s'
+set ylabel 'Duration ns'
 
 set key right center
 	
@@ -85,7 +85,7 @@ set out resultsfolder.'/graphs/scalability_overview.pdf'
 set title 'Overview of Method Execution Durations'
 
 set xlabel 'Call Tree Depth'
-set ylabel 'Duration {/Symbol m}s'
+set ylabel 'Duration ns'
 
 set key left top
 	
@@ -102,9 +102,9 @@ plot resultsfolder.'/evolution_inspectIT-java.csv' u 1:2 w linespoint lc "red" t
 	resultsfolder.'/evolution_Skywalking-java.csv' u 1:4 w linespoint lc rgb "#FFAAFF" title 'Skywalking', \
 	resultsfolder.'/evolution_Skywalking-java.csv' u 1:($4-$5):($4+$5) w filledcurves lc rgb "#FFAAFF" notitle fs transparent solid 0.5, \
 	resultsfolder.'/evolution_pinpoint-java.csv' u 1:8 w linespoint lc rgb "#FFAA00" title 'Pinpoint', \
-	resultsfolder.'/evolution_pinpoint-java.csv' u 1:($8-$9):($8+$9) w filledcurves lc rgb "#FFAA00" notitle fs transparent solid 0.5
-#	'results/evolution_Scouter-java.csv' u 1:4 w linespoint lc "purple" title 'Scouter', \
-#	'results/evolution_Scouter-java.csv' u 1:($4-$5):($4+$5) w filledcurves lc "purple" notitle fs transparent solid 0.5, \
+	resultsfolder.'/evolution_pinpoint-java.csv' u 1:($8-$9):($8+$9) w filledcurves lc rgb "#FFAA00" notitle fs transparent solid 0.5, \
+	resultsfolder.'/evolution_Scouter-java.csv' u 1:4 w linespoint lc "purple" title 'Scouter', \
+	resultsfolder.'/evolution_Scouter-java.csv' u 1:($4-$5):($4+$5) w filledcurves lc "purple" notitle fs transparent solid 0.5
 
 	
 unset output
@@ -115,7 +115,7 @@ set out resultsfolder.'/graphs/overview_OpenTelemetry-java.pdf'
 set title 'Overview of Method Execution Durations'
 
 set xlabel 'Call Tree Depth'
-set ylabel 'Duration {/Symbol m}s'
+set ylabel 'Duration ns'
 
 set key left top
 	
