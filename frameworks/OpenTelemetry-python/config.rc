@@ -1,18 +1,34 @@
-# to ensure it works regardless of where it is called
-BASE_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
-MAIN_DIR="$BASE_DIR/../../"
+# OpenTelemetry-python configuration
+
+# 1. Resolve paths with windows fix
+RAW_BASE_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+# Check if we are running in Git Bash on Windows
+if command -v cygpath &>/dev/null; then
+    # Convert /c/Users/... to C:\Users\... for Python
+    BASE_DIR=$(cygpath -w "$RAW_BASE_DIR")
+    # Also convert MAIN_DIR logic
+    RAW_MAIN_DIR="$RAW_BASE_DIR/../../"
+    MAIN_DIR=$(cygpath -w "$RAW_MAIN_DIR")
+else
+    BASE_DIR="$RAW_BASE_DIR"
+    MAIN_DIR="$RAW_BASE_DIR/../../"
+fi
+
+if [ -f "${MAIN_DIR}/config.rc" ]; then
+    source "${MAIN_DIR}/config.rc"
+fi
+
+PYTHON_BIN="python" 
+VENV_DIR="$BASE_DIR/venv"
+REQUIREMENTS_FILE="$BASE_DIR/requirements.txt"
 
 KIEKER_REPO_URL="https://github.com/kieker-monitoring/kieker-lang-pack-python.git"
 KIEKER_DIR="$BASE_DIR/kieker-lang-pack-python"
-
-# tool paths
 TOOLS_DIR="$MAIN_DIR/tools"
 PYTHON_SCRIPT="$TOOLS_DIR/pybenchmark/benchmark.py"
 CONFIG_TEMPLATE="$BASE_DIR/config.ini.template"
 CONFIG_FILE="$BASE_DIR/config.ini"
 RESULTS_DIR="$BASE_DIR/results"
-VENV_DIR="$BASE_DIR/venv"
-REQUIREMENTS_FILE="$BASE_DIR/requirements.txt"
 
-# make sure directory exists
-mkdir -p "$RESULTS_DIR"
+mkdir -p "$RAW_BASE_DIR/results"

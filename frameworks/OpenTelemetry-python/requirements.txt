@@ -1,3 +1,4 @@
 opentelemetry-distro
 opentelemetry-exporter-zipkin
-decorator
+opentelemetry-sdk
+opentelemetry-api

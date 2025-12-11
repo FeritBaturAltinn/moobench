@@ -1,5 +1,5 @@
 [Benchmark]
-total_calls = 10
+total_calls = 10000
 recursion_depth = 10
 method_time = 0
 config_path = /tmp/monitoring.ini

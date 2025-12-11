@@ -9,17 +9,25 @@ source "$DIR/functions.sh"
 echo " # Preparing Environment..."
 
 if [ -d "$VENV_DIR" ]; then rm -rf "$VENV_DIR"; fi
-python3 -m venv "$VENV_DIR"
-source "$VENV_DIR/bin/activate"
+
+# For windows compatibility
+if command -v python3 &>/dev/null; then
+    PYTHON_EXE=python3
+else
+    PYTHON_EXE=python
+fi
+
+$PYTHON_EXE -m venv "$VENV_DIR"
+
+
+if [ -f "$VENV_DIR/Scripts/activate" ]; then
+    source "$VENV_DIR/Scripts/activate"
+else
+    source "$VENV_DIR/bin/activate"
+fi
 
 pip install -q --upgrade pip
 pip install -q -r "$REQUIREMENTS_FILE"
-
-# kieker needed for imports in the shared script
-if [ ! -d "$KIEKER_DIR" ]; then
-    git clone -q "$KIEKER_REPO_URL" "$KIEKER_DIR"
-fi
-pip install -q "$KIEKER_DIR"
 
 opentelemetry-bootstrap -a install
 
