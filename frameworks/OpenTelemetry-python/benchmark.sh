@@ -2,7 +2,7 @@ DIR=$(cd "$(dirname "$0")" && pwd)
 source "$DIR/config.rc"
 
 if [ -z "$RECURSION_DEPTH" ]; then export RECURSION_DEPTH=10; fi
-if [ -z "$NUM_OF_LOOPS" ]; then export NUM_OF_LOOPS=1; fi
+if [ -z "$NUM_OF_LOOPS" ]; then export NUM_OF_LOOPS=10; fi
 
 source "$DIR/functions.sh"
 
@@ -30,8 +30,6 @@ pip install -q --upgrade pip
 pip install -q -r "$REQUIREMENTS_FILE"
 
 opentelemetry-bootstrap -a install
-
-
 
 executeBenchmark
 

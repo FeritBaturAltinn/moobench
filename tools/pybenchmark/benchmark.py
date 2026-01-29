@@ -4,18 +4,17 @@ import configparser
 import re
 import os
 
-# Import OpenTelemetry & Exporters
 try:
     from opentelemetry import trace
     from opentelemetry.sdk.trace import TracerProvider
     from opentelemetry.sdk.trace.export import BatchSpanProcessor
     from opentelemetry.exporter.zipkin.json import ZipkinExporter
     from opentelemetry.sdk.resources import Resource
+    from opentelemetry.semconv.resource import ResourceAttributes
     OTEL_AVAILABLE = True
 except ImportError:
     OTEL_AVAILABLE = False
 
-# Import Kieker
 try:
     from monitoring.controller import SingleMonitoringController
     from tools.importhookast import InstrumentOnImportFinder
@@ -44,9 +43,9 @@ except Exception as e:
     print(f"Error parsing config: {e}")
     sys.exit(1)
 
-# Setup Kieker iff requested and available
+# Setup Kieker only if requested
 if KIEKER_AVAILABLE and instrumentation_on:
-    # runs only for the original Kieker framework logic
+    # This segment runs only for the original Kieker framework logic
     some_var = SingleMonitoringController(ini_path)
     if approach == 2:
         sys.meta_path.insert(0, InstrumentOnImportFinder(ignore_list=[], empty=inactive, debug_on=False))
@@ -55,13 +54,12 @@ if KIEKER_AVAILABLE and instrumentation_on:
         exclude_modules = list()
         sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules, empty=inactive))
 
-# OpenTelemetry manual instrumentation 
 tracer = None
 if OTEL_AVAILABLE:
-    # so it shows up as "moobench-OTel-python" in Zipkin
     resource = Resource(attributes={
-        "service.name": "moobench-OTel-python"
+        ResourceAttributes.SERVICE_NAME: "moobench-python"
     })
+
     provider = TracerProvider(resource=resource)
 
     exporter_type = os.environ.get('OTEL_TRACES_EXPORTER', 'none')
@@ -84,22 +82,19 @@ output_file = open(output_filename, "w")
 thread_id = 0
 
 for i in range(total_calls):
-    
-    # If we have a tracer we wrap the method call in a Span.
+
+    start_ns = time.time_ns()
+
     if OTEL_AVAILABLE and tracer:
         with tracer.start_as_current_span("monitored_method"):
-            start_ns = time.time_ns()
             monitored_application.monitored_method(method_time, recursion_depth)
-            stop_ns = time.time_ns()
-
     else:
-        start_ns = time.time_ns()
         monitored_application.monitored_method(method_time, recursion_depth)
-        stop_ns = time.time_ns()
+
+    stop_ns = time.time_ns()
 
     duration = stop_ns - start_ns
-    
-    # Print progress every 100k calls to confirm it's not frozen
+
     if i % 100000 == 0 and i > 0:
         print(f"Call {i}: {duration} ns")
     
@@ -107,7 +102,6 @@ for i in range(total_calls):
 
 output_file.close()
 
-# If using Zipkin wait a bit to ensure all data is sent 
 if OTEL_AVAILABLE and os.environ.get('OTEL_TRACES_EXPORTER') == 'zipkin':
     print("Flushing traces to Zipkin (waiting 5s)...")
     time.sleep(5)
