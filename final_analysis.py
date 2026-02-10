@@ -2,7 +2,7 @@ import pandas as pd
 import glob
 import os
 
-KIEKER_DIR = "frameworks/Kieker-python/results-Kieker-python"
+KIEKER_DIR = "frameworks/Kieker-python/results-Kieker-python/results"
 OTEL_DIR   = "frameworks/OpenTelemetry-python/results"
 
 def calculate_mean(directory, file_prefix, config_index):
@@ -54,7 +54,6 @@ def main():
             print(f"{name:<25} | {stats['mean']:<15.2f} | {stats['std']:<15.2f}")
         else:
             print(f"{name:<25} | {'MISSING':<15} | -")
-
     p_row("Baseline (Python)", otel_baseline)
     p_row("OTel Internal", otel_internal)
     p_row("OTel Zipkin", otel_zipkin)

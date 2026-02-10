@@ -54,8 +54,12 @@ if KIEKER_AVAILABLE and instrumentation_on:
         exclude_modules = list()
         sys.meta_path.insert(0, PostImportFinder(pattern_object, exclude_modules, empty=inactive))
 
+# opentelemetry manual instrumentation
 tracer = None
-if OTEL_AVAILABLE:
+# Only enable if installed and requested via environment variable
+enable_otel = os.environ.get("ENABLE_OTEL", "false").lower() == "true"
+
+if OTEL_AVAILABLE and enable_otel:
     resource = Resource(attributes={
         ResourceAttributes.SERVICE_NAME: "moobench-python"
     })

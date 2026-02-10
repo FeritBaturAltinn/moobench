@@ -30,6 +30,10 @@ function runNoInstrumentation {
     echo " # Running Config $k: ${TITLE[$k]} (Iter $i)"
     
     updateConfigFilename "$CSV_FILE"
+
+    # DISABLE Manual Instrumentation for Baseline
+    export ENABLE_OTEL="false"
+
     python3 "$PYTHON_SCRIPT" "$CONFIG_FILE" > "$LOG_FILE" 2>&1
 }
 function runOpenTelemetryNoExport {
@@ -43,6 +47,7 @@ function runOpenTelemetryNoExport {
     
     updateConfigFilename "$CSV_FILE"
     
+    export ENABLE_OTEL="true"
     export OTEL_TRACES_EXPORTER="none"
     export OTEL_METRICS_EXPORTER="none"
     export OTEL_LOGS_EXPORTER="none"
@@ -61,6 +66,7 @@ function runOpenTelemetryZipkin {
     
     updateConfigFilename "$CSV_FILE"
     
+    export ENABLE_OTEL="true"
     export OTEL_SERVICE_NAME="moobench-python"
     export OTEL_TRACES_EXPORTER="zipkin"
     export OTEL_EXPORTER_ZIPKIN_ENDPOINT="http://localhost:9411/api/v2/spans"
