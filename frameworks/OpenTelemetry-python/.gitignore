@@ -5,3 +5,5 @@ results/
 config.ini
 *.log
 *.bak
+*.zip
+results-OpenTelemetry-python/
