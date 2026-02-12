@@ -52,15 +52,15 @@ function run_benchmark_logic {
 }
 
 function executeBenchmark {
-   if [ -z "$NUM_OF_LOOPS" ]; then NUM_OF_LOOPS=1; fi
-   
-   for ((i=1; i<=NUM_OF_LOOPS; i++))
+      for index in $MOOBENCH_CONFIGURATIONS
    do
-       echo "Starting Loop $i / $NUM_OF_LOOPS"
-       for index in $MOOBENCH_CONFIGURATIONS
-       do
-          run_benchmark_logic $index $i
-          sleep 1
-       done
+      case $index in
+         0) runNoInstrumentation 0 $i ;;
+         1) runOpenTelemetryNoExport 1 $i ;;
+         2) runOpenTelemetryZipkin 2 $i ;;
+      esac
+      
+      # Small sleep between configs
+      sleep 2
    done
 }
