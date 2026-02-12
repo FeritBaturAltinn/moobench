@@ -77,7 +77,6 @@ function runOpenTelemetryZipkin {
         export OTEL_EXPORTER_ZIPKIN_ENDPOINT="http://localhost:9411/api/v2/spans"
         export OTEL_METRICS_EXPORTER="none"
         export OTEL_LOGS_EXPORTER="none"
-    fi
     
     python3 "$PYTHON_SCRIPT" "$CONFIG_FILE" > "$LOG_FILE" 2>&1
 }
