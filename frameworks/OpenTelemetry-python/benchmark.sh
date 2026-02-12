@@ -15,19 +15,21 @@ else
 fi
 
 $PYTHON_EXE -m venv "$VENV_DIR"
-
-
-if [ -f "$VENV_DIR/Scripts/activate" ]; then
-    source "$VENV_DIR/Scripts/activate"
-else
-    source "$VENV_DIR/bin/activate"
-fi
+source "$VENV_DIR/bin/activate"
 
 pip install -q --upgrade pip
 pip install -q -r "$REQUIREMENTS_FILE"
 opentelemetry-bootstrap -a install
 
 cp "$CONFIG_TEMPLATE" "$CONFIG_FILE"
+
+export NUM_OF_LOOPS=${NUM_OF_LOOPS:-10}
+export TOTAL_NUM_OF_CALLS=${TOTAL_NUM_OF_CALLS:-2000000}
+export RECURSION_DEPTH=${RECURSION_DEPTH:-10}
+export METHOD_TIME=${METHOD_TIME:-0}
+export SLEEP_TIME=${SLEEP_TIME:-15}
+
+echo " # Starting Benchmark with $NUM_OF_LOOPS loops"
 executeAllLoops
 
 deactivate
