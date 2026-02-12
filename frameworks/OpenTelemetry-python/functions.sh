@@ -16,10 +16,10 @@ function get_os_path {
     if command -v cygpath &>/dev/null; then cygpath -w "$raw_path"; else echo "$raw_path"; fi
 }
 
-function run_benchmark_logic {
+function runNoInstrumentation {
     local k=$1
-    local i=$2
-
+    local i=$2 # Passed by executeBenchmark
+    
     local RES_DIR="${RESULTS_DIR}/../results-OpenTelemetry-python"
     mkdir -p "$RES_DIR"
     
@@ -31,15 +31,46 @@ function run_benchmark_logic {
     
     updateConfigFilename "$CSV_FILE"
     
-    # Config specific env vars
-    if [ "$k" -eq "0" ]; then
-        export ENABLE_OTEL="false"
-    elif [ "$k" -eq "1" ]; then
-        export ENABLE_OTEL="true"
-        export OTEL_TRACES_EXPORTER="none"
-        export OTEL_METRICS_EXPORTER="none"
-        export OTEL_LOGS_EXPORTER="none"
-    elif [ "$k" -eq "2" ]; then
+    # disable opentelemetry for baseline
+    export ENABLE_OTEL="false"
+    
+    python3 "$PYTHON_SCRIPT" "$CONFIG_FILE" > "$LOG_FILE" 2>&1
+}
+
+function runOpenTelemetryNoExport {
+    local k=$1
+    local i=$2
+    
+    local RES_DIR="${RESULTS_DIR}/../results-OpenTelemetry-python"
+    mkdir -p "$RES_DIR"
+    local RAW_CSV="${RES_DIR}/raw-${i}-${RECURSION_DEPTH}-${k}.csv"
+    local CSV_FILE=$(get_os_path "$RAW_CSV")
+    local LOG_FILE="${RES_DIR}/output-raw-${i}-${RECURSION_DEPTH}-${k}.txt"
+    
+    echo " # Running Config $k: ${TITLE[$k]} (Iter $i)"
+    updateConfigFilename "$CSV_FILE"
+    
+    export ENABLE_OTEL="true"
+    export OTEL_TRACES_EXPORTER="none"
+    export OTEL_METRICS_EXPORTER="none"
+    export OTEL_LOGS_EXPORTER="none"
+    
+    python3 "$PYTHON_SCRIPT" "$CONFIG_FILE" > "$LOG_FILE" 2>&1
+}
+
+function runOpenTelemetryZipkin {
+    local k=$1
+    local i=$2
+    
+    local RES_DIR="${RESULTS_DIR}/../results-OpenTelemetry-python"
+    mkdir -p "$RES_DIR"
+    local RAW_CSV="${RES_DIR}/raw-${i}-${RECURSION_DEPTH}-${k}.csv"
+    local CSV_FILE=$(get_os_path "$RAW_CSV")
+    local LOG_FILE="${RES_DIR}/output-raw-${i}-${RECURSION_DEPTH}-${k}.txt"
+    
+    echo " # Running Config $k: ${TITLE[$k]} (Iter $i)"
+    updateConfigFilename "$CSV_FILE"
+
         export ENABLE_OTEL="true"
         export OTEL_SERVICE_NAME="moobench-python"
         export OTEL_TRACES_EXPORTER="zipkin"
@@ -61,6 +92,6 @@ function executeBenchmark {
       esac
       
       # Small sleep between configs
-      sleep 2
+      sleep 1
    done
 }
