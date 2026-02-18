@@ -61,6 +61,7 @@ function runOpenTelemetryZipkin {
     local CSV_FILE=$(get_os_path "$RAW_CSV")
     local LOG_FILE="${RESULTS_DIR}/output-raw-${i}-${RECURSION_DEPTH}-${k}.txt"
     
+    startZipkin
     echo " # Running Config $k: ${TITLE[$k]} (Iter $i)"
     updateConfigFilename "$CSV_FILE"
     
@@ -72,6 +73,8 @@ function runOpenTelemetryZipkin {
     export OTEL_LOGS_EXPORTER="none"
     
     python3 "$PYTHON_SCRIPT" "$CONFIG_FILE" > "$LOG_FILE" 2>&1
+
+    stopBackgroundProcess
 }
 
 function executeBenchmark {
